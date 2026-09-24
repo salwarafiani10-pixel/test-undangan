@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Invitation - Slides</title>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: #cdeaf8; 
+      width: 100%;
+      height: 100vh;
+      overflow: hidden; 
+      font-family: 'Kalam', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wrapper {
+      background-color: #dcf3ff; 
+      width: 100%;
+      max-width: 420px; 
+      height: 100vh;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+      transform: translateY(30px);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      z-index: 10;
+    }
+
+    #slide-1 {
+      justify-content: center;
+      align-items: center;
+    }
+
+    #slide-2 {
+      justify-content: space-between; 
+      padding: 10px 0; 
+    }
+
+    #slide-3 {
+      justify-content: flex-start;
+      align-items: center;
+      padding: 8px 10px 0 10px;
+    }
+
+    /* --- SLIDE 4 (FINAL PAS & RAPI) --- */
+    #slide-4 {
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0;
+    }
+
+    .s4-bg-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .slide-4-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 15px;
+    }
+
+    /* NAMA: JARAK PAS DI BAWAH ORNAMEN LUHUR */
+    .s4-nama-img {
+      width: 61%;
+      max-width: 210px;
+      height: auto;
+      object-fit: contain;
+      opacity: 0;
+      margin-top: 55px;
+      flex-shrink: 0;
+    }
+
+    /* FOTO: UKURAN GEDE & PAS DI TENGAH */
+    .s4-foto-img {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      transform: translate(-50%, -50%);
+      width: 55%;
+      max-width: 210px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.12));
+      opacity: 0;
+      margin: 0;
+    }
+
+    /* KATA-KATA: AMAN TENTREM TIDAK NABRAK ORNAMEN HANDAP */
+    .s4-kata-img {
+      position: absolute;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 280px;
+      height: auto;
+      object-fit: contain;
+      opacity: 0;
+      margin: 0;
+    }
+
+    /* ANIMASI KETIKA SLIDE 4 AKTIF */
+    #slide-4.active .s4-nama-img {
+      animation: stopMotionDrop 1.2s forwards;
+      animation-delay: 0.2s;
+    }
+
+    #slide-4.active .s4-foto-img {
+      animation: s4FotoPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation-delay: 0.5s;
+    }
+
+    #slide-4.active .s4-kata-img {
+      animation: s4KataIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation-delay: 0.8s;
+    }
+
+    /* Animasi khusus slide 4 supaya posisi absolute tetap terjaga */
+    @keyframes s4FotoPop {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      80% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @keyframes s4KataIn {
+      0% { transform: translate(-50%, 35px); opacity: 0; }
+      100% { transform: translate(-50%, 0); opacity: 1; }
+    }
+
+    #scrapbook-container {
+      position: relative;
+      width: 85%;
+      max-width: 320px;
+      animation: stopMotionDrop 1.8s forwards;
+    }
+
+    .frame-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(4px 6px 4px rgba(0, 0, 0, 0.15));
+    }
+
+    #text-wrapper {
+      position: absolute;
+      top: 50%; 
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 65%; 
+      text-align: center;
+    }
+
+    #animated-text {
+      color: #ffffff;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      line-height: 1.3;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+      display: inline-block;
+      opacity: 0;
+      font-weight: 700;
+    }
+
+    #tap-hint {
+      position: absolute;
+      bottom: 5vh;
+      color: #6da5c6; 
+      font-size: 1rem;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    @keyframes stopMotionDrop {
+      0%, 19% { transform: translate(-40vw, -40vh) rotate(-20deg) scale(1.1); opacity: 0; }
+      20%, 39% { transform: translate(-20vw, -20vh) rotate(10deg) scale(1.05); opacity: 1; }
+      40%, 59% { transform: translate(-8vw, -8vh) rotate(-5deg) scale(1.02); }
+      60%, 79% { transform: translate(-2vw, -2vh) rotate(3deg) scale(1.01); }
+      80%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+    }
+
+    .floating {
+      animation: floatSubtle 4s ease-in-out infinite;
+    }
+
+    @keyframes floatSubtle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes stopMotionDropText {
+      0%, 19% { transform: translate(-30vw, -30vh) rotate(25deg) scale(1.2); opacity: 0; }
+      20%, 39% { transform: translate(-15vw, -15vh) rotate(-15deg) scale(1.1); opacity: 1; }
+      40%, 59% { transform: translate(-5vw, -5vh) rotate(10deg) scale(1.05); }
+      60%, 79% { transform: translate(-1vw, -1vh) rotate(-5deg) scale(1.02); }
+      80%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+    }
+
+    @keyframes wiggleSlow {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(4deg); }
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .header-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: -10px; 
+    }
+
+    .ornament-top {
+      width: 85%; 
+      max-width: 350px;
+      height: auto; 
+      object-fit: contain;
+      opacity: 0; 
+    }
+
+    .title-img {
+      width: 90%; 
+      max-width: 330px;
+      margin-top: -15px; 
+      opacity: 0; 
+    }
+
+    .ornament-bottom {
+      width: 85%; 
+      max-width: 350px;
+      height: auto; 
+      object-fit: contain;
+      opacity: 0; 
+    }
+
+    @keyframes slideInRightTop {
+      0% { transform: translateX(100vw); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideInRightBottom {
+      0% { transform: translateX(100vw) scaleY(-1); opacity: 0; }
+      100% { transform: translateX(0) scaleY(-1); opacity: 1; }
+    }
+
+    #slide-2.active .ornament-top {
+      animation: slideInRightTop 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation-delay: 0.2s;
+    }
+
+    #slide-2.active .ornament-bottom {
+      animation: slideInRightBottom 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation-delay: 0.4s; 
+    }
+
+    .content-slide-2 {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; 
+      align-items: center;
+      width: 100%;
+      padding: 0 15px;
+      gap: 10px; 
+    }
+
+    .profile-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 15px;
+      margin-top: 5px; 
+    }
+
+    .profile-frame {
+      width: 45%; 
+      max-width: 140px; 
+      opacity: 0; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .profile-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.1));
+    }
+
+    .name-container {
+      width: 45%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .name-img {
+      width: 100% !important; 
+      max-width: 145px !important;
+      height: auto !important;
+      opacity: 0;
+    }
+
+    .center-ornament {
+      width: 180px; 
+      height: auto;
+      opacity: 0;
+      margin: -2px 0;
+    }
+
+    @keyframes popUp {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    #slide-2.active .title-img {
+      animation: stopMotionDrop 1.2s forwards;
+      animation-delay: 0.6s;
+    }
+
+    #slide-2.active .delay-foto-1 {
+      animation: stopMotionDrop 1.2s forwards;
+      animation-delay: 1.0s;
+    }
+    #slide-2.active .delay-foto-2 {
+      animation: stopMotionDrop 1.2s forwards;
+      animation-delay: 2.2s;
+    }
+
+    #slide-2.active .pop-up {
+      animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    #slide-2.active .delay-nama-1 { animation-delay: 1.4s; }
+    #slide-2.active .delay-cincin { animation-delay: 1.8s; }
+    #slide-2.active .delay-nama-2 { animation-delay: 2.0s; }
+
+    .s3-std-img {
+      width: 78%;
+      max-width: 300px;
+      height: auto;
+      object-fit: contain;
+      opacity: 0;
+    }
+    #slide-3.active .s3-std-img {
+      animation: stopMotionDrop 1.2s forwards;
+      animation-delay: 0.2s;
+    }
+
+    .s3-cal-wrapper {
+      position: relative;
+      width: 70%;
+      max-width: 270px;
+      opacity: 0;
+      margin-top: 15px;
+    }
+
+    .s3-cal-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.08));
+    }
+
+    .s3-circle-img {
+      position: absolute;
+      top: 55%;
+      right: -4%;
+      width: 18%;
+      height: auto;
+      object-fit: contain;
+      transform: scale(0);
+      animation: rotateAndPulse 2.5s infinite ease-in-out;
+    }
+
+    .s3-det-img {
+      width: 85%;
+      max-width: 330px;
+      height: auto;
+      object-fit: contain;
+      opacity: 0;
+      margin-top: 10px;
+    }
+
+    .s3-bottom-row {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 10px 5px 0;
+      opacity: 0;
+    }
+
+    .s3-meja-img {
+      width: 52%;
+      max-width: 200px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .right-maps-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 40%;
+      max-width: 160px;
+      margin-bottom: 15px;
+    }
+
+    .s3-click-img {
+      width: 95%;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: -5px;
+      animation: bounceArrow 2s infinite ease-in-out;
+    }
+
+    .maps-link {
+      display: block;
+      width: 100%;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .s3-maps-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.2s ease;
+      filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.1));
+    }
+
+    .s3-maps-img:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes slideInFromBottom {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes rotateAndPulse {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(6deg); }
+    }
+
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    #slide-3.active .s3-cal-wrapper {
+      animation: slideInFromBottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation-delay: 0.4s;
+    }
+
+    #slide-3.active .s3-circle-img {
+      animation: slideInFromBottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, rotateAndPulse 2.5s infinite ease-in-out;
+      animation-delay: 0.5s, 1.4s;
+    }
+
+    #slide-3.active .s3-det-img {
+      animation: slideInFromBottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation-delay: 0.6s;
+    }
+
+    #slide-3.active .s3-bottom-row {
+      animation: slideInFromBottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation-delay: 0.8s;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <!-- SLIDE 1 -->
+    <div id="slide-1" class="slide active">
+      <div id="scrapbook-container">
+        <img src="Desain tanpa judul.png" alt="Bingkai Undangan" class="frame-image">
+        <div id="text-wrapper">
+          <span id="animated-text">You're<br>Invited</span>
+        </div>
+      </div>
+      <div id="tap-hint">Tap atau Geser ke Atas</div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div id="slide-2" class="slide">
+      <div class="header-group">
+        <img src="ornamen.png" alt="Ornamen Atas" class="ornament ornament-top">
+        <img src="the eng.png" alt="The Engagement of" class="title-img">
+      </div>
+      
+      <div class="content-slide-2">
+         <div class="profile-row">
+            <div class="profile-frame delay-foto-1">
+               <img src="cowo.png" alt="Foto Revaldi" class="profile-img">
+            </div>
+            <div class="name-container">
+               <img src="revaldi.png" alt="Revaldi Ali" class="name-img pop-up delay-nama-1">
+            </div>
+         </div>
+
+         <img src="cincin.png" alt="Cincin" class="center-ornament pop-up delay-cincin">
+
+         <div class="profile-row">
+            <div class="name-container">
+               <img src="Kirani Putri.png" alt="Kirani Putri" class="name-img pop-up delay-nama-2">
+            </div>
+            <div class="profile-frame delay-foto-2">
+               <img src="cewe.png" alt="Foto Kirani" class="profile-img">
+            </div>
+         </div>
+      </div>
+
+      <img src="ornamen.png" alt="Ornamen Bawah" class="ornament ornament-bottom">
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div id="slide-3" class="slide">
+      <img src="std.png" alt="Save The Date" class="s3-std-img">
+      
+      <div class="s3-cal-wrapper">
+        <img src="oct.png" alt="Calendar October" class="s3-cal-img">
+        <img src="bulat.png" alt="Circle Marker" class="s3-circle-img">
+      </div>
+
+      <img src="det.png" alt="Time and Place Details" class="s3-det-img">
+
+      <div class="s3-bottom-row">
+        <img src="meja.png" alt="Meja Makan" class="s3-meja-img">
+        <div class="right-maps-container">
+          <img src="CLICK.png" alt="Click Here" class="s3-click-img">
+          <a href="https://maps.google.com/?q=Bumi+Tarate+Jl.+Raya+Bojongsoang+No.71+Buah+Batu+Bandung" target="_blank" class="maps-link">
+            <img src="maps.png" alt="Open Maps" class="s3-maps-img">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div id="slide-4" class="slide">
+      <img src="bg4.png" alt="Background Frame" class="s4-bg-frame">
+      <div class="slide-4-content">
+        <img src="nama.png" alt="Revaldi & Kirani" class="s4-nama-img">
+        <img src="fotokita.png" alt="Foto Pasangan" class="s4-foto-img">
+        <img src="kata.png" alt="Kata-kata Undangan" class="s4-kata-img">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const scrapbookContainer = document.getElementById("scrapbook-container");
+      const animatedText = document.getElementById("animated-text");
+      const tapHint = document.getElementById("tap-hint");
+      
+      let currentSlide = 1;
+      const totalSlides = 4;
+
+      function goToSlide(slideNum) {
+        if (slideNum < 1 || slideNum > totalSlides) return;
+        currentSlide = slideNum;
+
+        for (let i = 1; i <= totalSlides; i++) {
+          const slideEl = document.getElementById(`slide-${i}`);
+          if (i === currentSlide) {
+            slideEl.classList.add("active");
+          } else {
+            slideEl.classList.remove("active");
+          }
+        }
+      }
+
+      setTimeout(() => {
+        scrapbookContainer.classList.add("floating");
+        animatedText.style.animation = "stopMotionDropText 1.2s forwards";
+        
+        setTimeout(() => {
+          animatedText.style.opacity = "1";
+          animatedText.style.animation = "wiggleSlow 3s ease-in-out infinite";
+        }, 1200);
+
+        setTimeout(() => {
+          animatedText.style.transition = "opacity 0.4s ease";
+          animatedText.style.opacity = "0";
+
+          setTimeout(() => {
+            animatedText.innerHTML = "To Our<br>Engaged";
+            animatedText.style.transition = "none";
+            animatedText.style.animation = "stopMotionDropText 1.2s forwards";
+            
+            setTimeout(() => {
+              animatedText.style.opacity = "1";
+              animatedText.style.animation = "wiggleSlow 3s ease-in-out infinite";
+              
+              setTimeout(() => {
+                tapHint.style.opacity = "1";
+                tapHint.style.animation = "pulseHint 2s infinite ease-in-out";
+              }, 1200);
+
+            }, 1200);
+          }, 400);
+        }, 2500);
+
+      }, 1500); 
+
+      document.body.addEventListener('click', (e) => {
+        if (e.target.closest('.maps-link')) return;
+
+        if (currentSlide < totalSlides) {
+          goToSlide(currentSlide + 1);
+        }
+      });
+
+      let startY = 0;
+      document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
+      document.addEventListener('touchend', e => {
+        let diffY = startY - e.changedTouches[0].clientY;
+        if (diffY > 50) {
+          if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
+        } else if (diffY < -50) {
+          if (currentSlide > 1) goToSlide(currentSlide - 1);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
